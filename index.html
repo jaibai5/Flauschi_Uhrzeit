@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <!-- Wichtig für Tablets: Verhindert automatisches Zoomen, wenn Nea tippt -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Die Uhr mit Flauschi dem Regenbogenalpaka</title>
+    <style>
+        /* --- GRUNDDESIGN & FARBEN --- */
+        :root {
+            --bg-blue: #d4f0ff; /* Sanftes Himmelblau */
+            --box-white: #ffffff;
+            --text-dark: #333333;
+            --primary-btn: #4CAF50;
+            --primary-btn-hover: #45a049;
+            --flauschi-blue: #3b4d9b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif; /* Kinderfreundliche Schriftarten */
+            touch-action: manipulation; /* Macht das Tippen auf dem Tablet flüssiger */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-blue);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Kein Scrollen auf dem Tablet */
+        }
+
+        /* --- KOPFZEILE (BELOHNUNGEN) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 25px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-bottom: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .counter-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.1);
+            border: 2px solid #eee;
+        }
+
+        .counter-icon {
+            font-size: 32px;
+            margin-right: 10px;
+        }
+
+        #star-counter-box { border-color: #ffd700; }
+        #carrot-counter-box { border-color: #ff9800; }
+
+        /* --- NEU: Level Anzeige & Shop --- */
+        .level-box {
+            background: var(--flauschi-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        #shop-btn {
+            background: #9c27b0;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0px #7b1fa2;
+            transition: all 0.1s;
+        }
+        #shop-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px #7b1fa2;
+        }
+
+        #shop-content {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 4px solid var(--flauschi-blue);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-height: 85vh;
+            overflow-y: auto; /* Erlaubt das Scrollen, wenn es viele Items gibt! */
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f0f8ff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            font-size: 20px;
+            border: 2px solid #b3e5fc;
+        }
+        .shop-item button {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #e65100;
+        }
+        .shop-item button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #e65100;
+        }
+        .shop-item button:disabled {
+            background: #ccc;
+            box-shadow: 0 4px 0px #aaa;
+            cursor: not-allowed;
+        }
+
+        /* --- HAUPTBEREICH (FÜR DIE AUFGABEN) --- */
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .task-container {
+            background: var(--box-white);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 4px solid white;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: var(--flauschi-blue);
+            margin-top: 0;
+        }
+
+        /* Start- & Test-Button */
+        .btn-test {
+            background-color: var(--primary-btn);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 22px;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0px #2e7d32;
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin-top: 20px;
+        }
+
+        .btn-test:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px #2e7d32;
+        }
+
+        /* --- NEU: SPICKZETTEL-BUTTON --- */
+        .btn-help {
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #ffa000;
+            margin-bottom: 15px;
+            transition: all 0.1s;
+        }
+        .btn-help:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #ffa000;
+        }
+
+        /* --- SCHRITT 2: TASK-STYLES (Uhr & Nummernblock) --- */
+        .clock-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            position: relative;
+        }
+
+        .digital-display {
+            font-size: 36px;
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--flauschi-blue);
+            background: #eee;
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: inline-block;
+            min-width: 180px;
+            border: 3px inset #ccc;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .numpad button {
+            background-color: var(--primary-btn);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 24px;
+            border-radius: 12px;
+            box-shadow: 0 5px 0px var(--primary-btn-hover);
+            cursor: pointer;
+            touch-action: manipulation; /* Wichtig fürs Tablet! Verhindert Verzögerungen beim Tippen */
+        }
+
+        .numpad button:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px var(--primary-btn-hover);
+        }
+
+        .numpad .btn-del { background-color: #ff9800; box-shadow: 0 5px 0px #e68a00; }
+        .numpad .btn-ok { background-color: #2196F3; box-shadow: 0 5px 0px #1976D2; }
+
+        /* --- SCHRITT 3: TASK 2 STYLES (Zeiger einstellen) --- */
+        .adjust-controls {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .adjust-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .adjust-group span {
+            font-size: 20px;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .adjust-group button {
+            color: white;
+            border: none;
+            width: 60px;
+            height: 50px;
+            font-size: 32px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .adjust-group button:active {
+            transform: translateY(5px);
+        }
+        
+        /* Rot für Stundenzeiger (pädagogische Farbzuordnung) */
+        .adjust-group.hours button { background-color: #ff4d4d; box-shadow: 0 5px 0px #cc0000; }
+        .adjust-group.hours span { color: #ff4d4d; }
+        .adjust-group.hours button:active { box-shadow: 0 0px 0px #cc0000; }
+
+        /* Blau für Minutenzeiger (pädagogische Farbzuordnung) */
+        .adjust-group.mins button { background-color: #3399ff; box-shadow: 0 5px 0px #0066cc; }
+        .adjust-group.mins span { color: #3399ff; }
+        .adjust-group.mins button:active { box-shadow: 0 0px 0px #0066cc; }
+
+        /* --- SCHRITT 4 & 5: TASK 3 & 4 STYLES (Multiple Choice) --- */
+        .mc-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .mc-options button {
+            background-color: var(--box-white);
+            color: var(--flauschi-blue);
+            border: 3px solid var(--primary-btn);
+            padding: 15px;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 15px;
+            box-shadow: 0 5px 0px var(--primary-btn-hover);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .mc-options button:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px var(--primary-btn-hover);
+        }
+
+        .story-box {
+            font-size: 22px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            border: 2px dashed var(--flauschi-blue);
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* --- FLAUSCHI BEREICH (UNTEN LINKS) --- */
+        #flauschi-area {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 250px;
+        }
+
+        /* Die Sprechblase */
+        .speech-bubble {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 18px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            border: 3px solid #ffd700;
+            width: 100%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 40px;
+            border-width: 15px 15px 0 0;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        /* Flauschi SVG Container */
+        #flauschi-svg {
+            width: 180px;
+            height: auto;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* --- ANIMATIONEN --- */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .bounce {
+            animation: jump 0.5s ease;
+        }
+
+        @keyframes jump {
+            0% { transform: scale(1) translateY(0); }
+            30% { transform: scale(1.1, 0.9) translateY(10px); }
+            50% { transform: scale(0.9, 1.1) translateY(-30px); }
+            80% { transform: scale(1.05, 0.95) translateY(0); }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        .chew {
+            animation: chewing 0.8s ease 2; /* Kaut zweimal */
+        }
+
+        @keyframes chewing {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05, 0.95); } /* Wird etwas breiter/flacher */
+            100% { transform: scale(1); }
+        }
+
+        /* Fliegende Möhre / Stern */
+        .flying-item {
+            position: fixed;
+            font-size: 40px;
+            z-index: 100;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        .pulse-star {
+            animation: pulse 0.5s ease 3;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- NEUE ANIMATIONEN: Salto & Ducken --- */
+        .backflip {
+            animation: flip 0.8s ease-in-out;
+            transform-origin: center center;
+        }
+        
+        @keyframes flip {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-80px) rotate(-180deg); }
+            100% { transform: translateY(0) rotate(-360deg); }
+        }
+
+        .duck {
+            animation: ducking 0.6s ease;
+            transform-origin: bottom center;
+        }
+
+        @keyframes ducking {
+            0% { transform: scaleY(1) translateY(0); }
+            40% { transform: scaleY(0.7) scaleX(1.1) translateY(10px); } /* Zieht den Kopf ein und macht sich breit */
+            100% { transform: scaleY(1) translateY(0); }
+        }
+
+        /* --- Flauschi Zwinkern --- */
+        #flauschi-eye {
+            animation: blink 4s infinite;
+            transform-origin: 145px 75px; /* Die neue Mitte Augenmitte */
+        }
+
+        @keyframes blink {
+            0%, 95%, 100% { transform: scaleY(1); }
+            97% { transform: scaleY(0.1); } /* Auge wird für einen Bruchteil einer Sekunde flach */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- BELOHNUNGS-LEISTE -->
+    <header>
+        <div class="counter-box" id="carrot-counter-box">
+            <span class="counter-icon">🥕</span>
+            <span id="carrot-count">0</span> <span style="font-size:16px; margin-left:5px; color:#888;">/ 10</span>
+        </div>
+        
+        <!-- Level Anzeige (Mit verstecktem Reset: 5x tippen) -->
+        <div class="level-box" id="level-display" onclick="handleResetClick()">Level 1</div>
+
+        <!-- Shop-Button eingebaut -->
+        <div style="display: flex; gap: 10px;">
+            <button id="shop-btn" onclick="openShop()">🛍️ Shop</button>
+            <div class="counter-box" id="star-counter-box">
+                <span class="counter-icon">⭐</span>
+                <!-- STERNE SIND WIEDER AUF 0 -->
+                <span id="star-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SHOP MODAL -->
+    <div id="shop-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+        <div id="shop-content">
+            <h2 style="color: var(--flauschi-blue); margin-top: 0;">Flauschis Kleiderschrank 🛍️</h2>
+            <p style="font-size: 18px; margin-bottom: 20px;">Kaufe tolle Sachen für Flauschi mit deinen Sternen!</p>
+            
+            <!-- 1 Stern Items -->
+            <div class="shop-item">
+                <span>😎 coole Brille</span>
+                <button onclick="buyItem('sunglasses', 1)" id="btn-sunglasses">1 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>👟 rote Schuhe</span>
+                <button onclick="buyItem('shoes_red', 1)" id="btn-shoes_red">1 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>🔔 Halsband</span>
+                <button onclick="buyItem('collar', 1)" id="btn-collar">1 ⭐ Kaufen</button>
+            </div>
+
+            <!-- 2 Sterne Items -->
+            <div class="shop-item">
+                <span>🎀 Riesen-Fliege</span>
+                <button onclick="buyItem('bowtie', 2)" id="btn-bowtie">2 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>🎧 Kopfhörer</span>
+                <button onclick="buyItem('headphones', 2)" id="btn-headphones">2 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>🦄 Einhorn-Horn</span>
+                <button onclick="buyItem('unicorn', 2)" id="btn-unicorn">2 ⭐ Kaufen</button>
+            </div>
+
+            <!-- 3 Sterne Items -->
+            <div class="shop-item">
+                <span>🎩 toller Hut</span>
+                <button onclick="buyItem('hat', 3)" id="btn-hat">3 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>🦋 Feen-Flügel</span>
+                <button onclick="buyItem('wings', 3)" id="btn-wings">3 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>💛 goldenes Fell</span>
+                <button onclick="buyItem('goldfur', 3)" id="btn-goldfur">3 ⭐ Kaufen</button>
+            </div>
+            <div class="shop-item">
+                <span>💖 rosa Fell</span>
+                <button onclick="buyItem('pinkfur', 3)" id="btn-pinkfur">3 ⭐ Kaufen</button>
+            </div>
+            
+            <button class="btn-test" style="margin-top:20px; font-size: 20px;" onclick="closeShop()">Schließen</button>
+        </div>
+    </div>
+
+    <!-- HAUPTBEREICH -->
+    <main>
+        <!-- STARTBILDSCHIRM (wird zuerst angezeigt) -->
+        <div class="task-container" id="start-screen">
+            <h1>Hallo Nea! 👋</h1>
+            <p style="font-size: 20px;">Ich bin Flauschi, das Regenbogenalpaka.</p>
+            <p>Ich freue mich riesig darauf, mit dir die Uhr zu lernen!</p>
+            <p>Für jede richtige Aufgabe bekomme ich eine leckere Möhre. Wenn du 10 Möhren gesammelt hast, bekommst du einen goldenen Stern!</p>
+            <button class="btn-test" style="margin-top: 20px; font-size: 26px; padding: 20px 40px;" onclick="startGame()">
+                Los geht's!
+            </button>
+        </div>
+
+        <!-- AUFGABENBEREICH (anfangs versteckt) -->
+        <div class="task-container" id="task-area" style="display: none;">
+            <h2 id="task-question" style="color: var(--flauschi-blue); margin-top:0;">Wie spät ist es?</h2>
+            
+            <!-- NEU: SPICKZETTEL-BUTTON (wird bei Textaufgaben ausgeblendet) -->
+            <button id="help-btn" class="btn-help" onclick="toggleHelpers()">💡 Spickzettel</button>
+
+            <!-- TASK TYP 1: Uhr ablesen -->
+            <div id="task-ui-1">
+                <!-- Analoge Uhr als SVG -->
+                <div class="clock-container">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <circle cx="50" cy="50" r="48" fill="white" stroke="#333" stroke-width="3"/>
+                        <!-- Ziffernblatt Striche (12, 3, 6, 9 Uhr) -->
+                        <line x1="50" y1="2" x2="50" y2="10" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="50" y1="98" x2="50" y2="90" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="2" y1="50" x2="10" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="98" y1="50" x2="90" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        
+                        <!-- Punkte für die restlichen Stunden -->
+                        <circle cx="74" cy="11.4" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="74" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="11.4" r="1.5" fill="#333"/>
+
+                        <!-- Zeiger -->
+                        <line id="hour-hand" x1="50" y1="50" x2="50" y2="25" stroke="#ff4d4d" stroke-width="5" stroke-linecap="round"/>
+                        <line id="minute-hand" x1="50" y1="50" x2="50" y2="10" stroke="#3399ff" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Mittelpunkt -->
+                        <circle cx="50" cy="50" r="4" fill="#333"/>
+                    </svg>
+                </div>
+
+                <!-- Anzeige für die eingetippte Uhrzeit -->
+                <div class="digital-display" id="digital-input">_ _ : _ _</div>
+
+                <!-- Bunter Nummernblock für Nea -->
+                <div class="numpad">
+                    <button onclick="pressNumpad(1)">1</button>
+                    <button onclick="pressNumpad(2)">2</button>
+                    <button onclick="pressNumpad(3)">3</button>
+                    <button onclick="pressNumpad(4)">4</button>
+                    <button onclick="pressNumpad(5)">5</button>
+                    <button onclick="pressNumpad(6)">6</button>
+                    <button onclick="pressNumpad(7)">7</button>
+                    <button onclick="pressNumpad(8)">8</button>
+                    <button onclick="pressNumpad(9)">9</button>
+                    <button class="btn-del" onclick="pressDel()">⌫</button>
+                    <button onclick="pressNumpad(0)">0</button>
+                    <button class="btn-ok" onclick="checkAnswer()">OK</button>
+                </div>
+            </div>
+
+            <!-- TASK TYP 2: Zeiger einstellen -->
+            <div id="task-ui-2" style="display: none;">
+                <!-- Analoge Uhr 2 als SVG -->
+                <div class="clock-container">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <circle cx="50" cy="50" r="48" fill="white" stroke="#333" stroke-width="3"/>
+                        <line x1="50" y1="2" x2="50" y2="10" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="50" y1="98" x2="50" y2="90" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="2" y1="50" x2="10" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="98" y1="50" x2="90" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="74" cy="11.4" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="74" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="11.4" r="1.5" fill="#333"/>
+                        <!-- Zeiger mit neuen IDs für Task 2 -->
+                        <line id="hour-hand-2" x1="50" y1="50" x2="50" y2="25" stroke="#ff4d4d" stroke-width="5" stroke-linecap="round"/>
+                        <line id="minute-hand-2" x1="50" y1="50" x2="50" y2="10" stroke="#3399ff" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="50" cy="50" r="4" fill="#333"/>
+                    </svg>
+                </div>
+
+                <!-- Steuerknöpfe für Zeiger -->
+                <div class="adjust-controls">
+                    <div class="adjust-group hours">
+                        <button onclick="adjustTime('h', 1)">+</button>
+                        <span>Stunden</span>
+                        <button onclick="adjustTime('h', -1)">-</button>
+                    </div>
+                    <div class="adjust-group mins">
+                        <button onclick="adjustTime('m', 15)">+</button>
+                        <span>Minuten</span>
+                        <button onclick="adjustTime('m', -15)">-</button>
+                    </div>
+                </div>
+                <button class="btn-ok" style="padding: 15px 40px; font-size: 24px; border-radius: 12px; background-color: #2196F3; color: white; border: none; box-shadow: 0 5px 0px #1976D2; cursor: pointer;" onclick="checkAnswerTask2()">Fertig!</button>
+            </div>
+
+            <!-- TASK TYP 3: Zuordnen (Multiple Choice) -->
+            <div id="task-ui-3" style="display: none;">
+                <!-- Analoge Uhr 3 als SVG -->
+                <div class="clock-container">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <circle cx="50" cy="50" r="48" fill="white" stroke="#333" stroke-width="3"/>
+                        <line x1="50" y1="2" x2="50" y2="10" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="50" y1="98" x2="50" y2="90" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="2" y1="50" x2="10" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="98" y1="50" x2="90" y2="50" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="74" cy="11.4" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="88.6" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="74" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="88.6" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="74" r="1.5" fill="#333"/>
+                        <circle cx="11.4" cy="26" r="1.5" fill="#333"/>
+                        <circle cx="26" cy="11.4" r="1.5" fill="#333"/>
+                        <line id="hour-hand-3" x1="50" y1="50" x2="50" y2="25" stroke="#ff4d4d" stroke-width="5" stroke-linecap="round"/>
+                        <line id="minute-hand-3" x1="50" y1="50" x2="50" y2="10" stroke="#3399ff" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="50" cy="50" r="4" fill="#333"/>
+                    </svg>
+                </div>
+                
+                <!-- Buttons für die 3 digitalen Antwortmöglichkeiten -->
+                <div class="mc-options" id="mc-buttons-container">
+                    <!-- Wird durch JavaScript gefüllt -->
+                </div>
+            </div>
+
+            <!-- TASK TYP 4: Sachaufgaben / Textaufgaben -->
+            <div id="task-ui-4" style="display: none;">
+                <div class="story-box">
+                    <span id="task4-story">Hier kommt die Geschichte hin...</span>
+                </div>
+                
+                <!-- Buttons für die 3 digitalen Antwortmöglichkeiten -->
+                <div class="mc-options" id="mc-buttons-container-4">
+                    <!-- Wird durch JavaScript gefüllt -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FLAUSCHI & SPRECHBLASE -->
+        <div id="flauschi-area">
+            <div class="speech-bubble" id="flauschi-text">
+                Klick auf "Los geht's!", wenn du bereit bist!
+            </div>
+            
+            <!-- Flauschi als Vektorgrafik (SVG) -->
+            <svg id="flauschi-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Regenbogen-Verlauf für den Körper -->
+                <defs>
+                    <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ff4d4d"/>    <!-- Rot -->
+                        <stop offset="25%" stop-color="#ff9933"/>   <!-- Orange -->
+                        <stop offset="50%" stop-color="#ffd633"/>   <!-- Gelb -->
+                        <stop offset="75%" stop-color="#33cc33"/>   <!-- Grün -->
+                        <stop offset="100%" stop-color="#3399ff"/>  <!-- Blau -->
+                    </linearGradient>
+                </defs>
+
+                <!-- NEU: Feen-Flügel (werden im Hintergrund geladen) -->
+                <g id="acc-wings" style="display:none;">
+                    <!-- Großer Flügel -->
+                    <path d="M60 110 C 30 60, -20 70, 0 110 C -20 150, 40 170, 60 130 Z" fill="rgba(200, 255, 255, 0.6)" stroke="#00ffff" stroke-width="2"/>
+                    <!-- Kleiner Flügel -->
+                    <path d="M60 110 C 40 80, 10 90, 20 110 C 10 130, 40 140, 60 120 Z" fill="rgba(255, 200, 255, 0.6)" stroke="#ff00ff" stroke-width="2"/>
+                </g>
+
+                <!-- Beine (Hinten) -->
+                <rect x="60" y="140" width="16" height="40" rx="8" fill="#444"/>
+                <rect x="120" y="140" width="16" height="40" rx="8" fill="#444"/>
+
+                <!-- Beine (Vorne - etwas versetzt) -->
+                <rect x="50" y="145" width="16" height="40" rx="8" fill="#222"/>
+                <rect x="110" y="145" width="16" height="40" rx="8" fill="#222"/>
+
+                <!-- Hals (tiefer in den Körper gezogen, um Lücke zu schließen) -->
+                <path d="M120 120 L160 120 L155 75 L135 75 Z" fill="var(--flauschi-blue)" stroke="#000" stroke-width="3"/>
+
+                <!-- Körper (id hinzugefügt für Fellwechsel) -->
+                <path id="alpaca-body" d="M 40 100 
+                         C 20 100, 10 120, 20 140 
+                         C 10 160, 40 160, 50 150 
+                         C 60 170, 90 170, 100 150 
+                         C 120 170, 150 160, 150 140 
+                         C 160 120, 150 100, 130 100 
+                         C 120 80, 90 70, 70 90 
+                         C 50 80, 40 90, 40 100 Z" 
+                      fill="url(#rainbowGrad)" stroke="#000" stroke-width="4"/>
+
+                <!-- Kopf (Blau) - weiter unten auf den Körper gesetzt -->
+                <ellipse cx="145" cy="80" rx="25" ry="20" fill="var(--flauschi-blue)" stroke="#000" stroke-width="3"/>
+
+                <!-- Ohren -->
+                <path d="M130 65 L125 50 L140 60 Z" fill="var(--flauschi-blue)" stroke="#000" stroke-width="3"/>
+                <path d="M150 60 L160 45 L160 60 Z" fill="var(--flauschi-blue)" stroke="#000" stroke-width="3"/>
+
+                <!-- Flauschi-Haare auf dem Kopf -->
+                <circle cx="135" cy="60" r="8" fill="var(--flauschi-blue)" stroke="#000" stroke-width="2"/>
+                <circle cx="145" cy="55" r="10" fill="var(--flauschi-blue)" stroke="#000" stroke-width="2"/>
+                <circle cx="155" cy="60" r="8" fill="var(--flauschi-blue)" stroke="#000" stroke-width="2"/>
+
+                <!-- Schnauze (Weiß) -->
+                <ellipse cx="165" cy="85" rx="12" ry="10" fill="#fff" stroke="#000" stroke-width="2"/>
+                
+                <!-- Nase (Pink) -->
+                <circle cx="172" cy="82" r="4" fill="#ff66b2"/>
+                
+                <!-- Mund lächelnd -->
+                <path d="M 160 88 Q 165 93 170 88" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+
+                <!-- NEU: Rote Schuhe -->
+                <g id="acc-shoes_red" style="display:none;">
+                    <!-- Schuhe hinten -->
+                    <rect x="58" y="170" width="20" height="10" rx="4" fill="#ff4d4d"/>
+                    <rect x="118" y="170" width="20" height="10" rx="4" fill="#ff4d4d"/>
+                    <!-- Schuhe vorne -->
+                    <rect x="48" y="175" width="20" height="10" rx="4" fill="#cc0000"/>
+                    <rect x="108" y="175" width="20" height="10" rx="4" fill="#cc0000"/>
+                </g>
+
+                <!-- NEU: Halsband -->
+                <g id="acc-collar" style="display:none;">
+                    <path d="M125 105 Q 140 115 155 105" fill="none" stroke="#f44336" stroke-width="6"/>
+                    <circle cx="140" cy="112" r="6" fill="#ffd700" stroke="#d4af37" stroke-width="1"/>
+                </g>
+
+                <!-- NEU: Angepasste Fliege (sitzt jetzt gut auf der Brust) -->
+                <g id="acc-bowtie" style="display:none;">
+                    <path d="M140 115 L120 100 L120 130 Z" fill="#e91e63" stroke="#fff" stroke-width="2"/>
+                    <path d="M140 115 L160 100 L160 130 Z" fill="#e91e63" stroke="#fff" stroke-width="2"/>
+                    <circle cx="140" cy="115" r="7" fill="#c2185b" stroke="#fff" stroke-width="2"/>
+                </g>
+
+                <!-- NEU: Kopfhörer -->
+                <g id="acc-headphones" style="display:none;">
+                    <!-- Bügel -->
+                    <path d="M120 70 A 30 30 0 0 1 170 70" fill="none" stroke="#333" stroke-width="5"/>
+                    <!-- Ohrmuscheln -->
+                    <rect x="110" y="60" width="12" height="24" rx="6" fill="#00bcd4"/>
+                    <rect x="168" y="60" width="12" height="24" rx="6" fill="#00bcd4"/>
+                </g>
+
+                <!-- Auge (Zwinkern) -->
+                <g id="flauschi-eye">
+                    <circle cx="145" cy="75" r="4" fill="#000"/>
+                    <circle cx="146" cy="74" r="1.5" fill="#fff"/> <!-- Lichtreflex -->
+                </g>
+
+                <!-- NEU: Sonnenbrille (sitzt jetzt perfekt über dem Auge) -->
+                <g id="acc-sunglasses" style="display:none;">
+                    <!-- Linkes Glas -->
+                    <rect x="135" y="65" width="20" height="14" rx="4" fill="#222"/>
+                    <!-- Brücke -->
+                    <line x1="155" y1="72" x2="162" y2="72" stroke="#222" stroke-width="3"/>
+                    <!-- Rechtes Glas (teilweise sichtbar wg. Perspektive) -->
+                    <rect x="162" y="65" width="10" height="14" rx="4" fill="#222"/>
+                    <!-- Bügel -->
+                    <line x1="135" y1="70" x2="125" y2="60" stroke="#222" stroke-width="3"/>
+                </g>
+
+                <!-- NEU: Einhorn-Horn -->
+                <g id="acc-unicorn" style="display:none;">
+                    <path d="M135 60 L125 15 L145 60 Z" fill="#ffd700" stroke="#d4af37" stroke-width="2"/>
+                    <!-- Magische Streifen und Glitzern -->
+                    <line x1="128" y1="40" x2="140" y2="45" stroke="#fff" stroke-width="2"/>
+                    <line x1="130" y1="30" x2="135" y2="33" stroke="#fff" stroke-width="2"/>
+                    <circle cx="125" cy="15" r="3" fill="#fff"/>
+                    <circle cx="120" cy="25" r="2" fill="#fff"/>
+                    <circle cx="130" cy="10" r="1.5" fill="#fff"/>
+                </g>
+
+                <!-- NEU: Angepasster Hut (sitzt jetzt genau auf dem tieferen Kopf) -->
+                <g id="acc-hat" style="display:none;">
+                    <!-- Krempe -->
+                    <ellipse cx="145" cy="55" rx="28" ry="8" fill="#ff9800" stroke="#e65100" stroke-width="2"/>
+                    <!-- Hutkopf -->
+                    <path d="M130 55 L135 20 L155 20 L160 55 Z" fill="#ff9800" stroke="#e65100" stroke-width="2"/>
+                    <!-- Hutband -->
+                    <rect x="132" y="45" width="26" height="8" fill="#e91e63"/>
+                </g>
+            </svg>
+        </div>
+    </main>
+
+    <script>
+        // --- SOUND ENGINE (Synthesizer im Browser) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'throw') {
+                // Ein kurzes "Plopp/Wusch" beim Fliegen
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'chew') {
+                // Ein knuspriges Kaugeräusch
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+                
+                // Zweiter Kau-Sound kurz danach
+                setTimeout(() => {
+                    if(!audioCtx) return;
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(450, audioCtx.currentTime);
+                    osc2.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
+                    gain2.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc2.start(audioCtx.currentTime);
+                    osc2.stop(audioCtx.currentTime + 0.1);
+                }, 150);
+            } else if (type === 'star') {
+                // Ein fröhliches "Tada!" für den Stern
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(440, now); // Ton 1
+                osc.frequency.setValueAtTime(554.37, now + 0.1); // Ton 2
+                osc.frequency.setValueAtTime(659.25, now + 0.2); // Ton 3
+                osc.frequency.setValueAtTime(880, now + 0.3); // Ton 4 (hoch)
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'wrong') {
+                // Ein sanftes, aufmunterndes tiefes Geräusch
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.4);
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- VARIABLEN ---
+        let carrots = 0;
+        let stars = 0; // STERNE SIND ZURÜCK AUF 0!
+        let totalStarsEarned = 0; // Zählt alle Sterne für das Level
+        
+        let inventory = { 
+            sunglasses: false, shoes_red: false, collar: false,
+            bowtie: false, headphones: false, unicorn: false,
+            hat: false, wings: false, goldfur: false, pinkfur: false 
+        };
+
+        const carrotCountEl = document.getElementById('carrot-count');
+        const starCountEl = document.getElementById('star-count');
+        const flauschiSvg = document.getElementById('flauschi-svg');
+        const flauschiText = document.getElementById('flauschi-text');
+
+        // --- FORTSCHRITT SPEICHERN UND LADEN ---
+        function saveProgress() {
+            const data = {
+                carrots: carrots,
+                stars: stars,
+                totalStarsEarned: totalStarsEarned,
+                inventory: inventory
+            };
+            localStorage.setItem('flauschiProgress', JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('flauschiProgress');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    carrots = data.carrots || 0;
+                    stars = data.stars || 0;
+                    totalStarsEarned = data.totalStarsEarned || 0;
+                    
+                    if (data.inventory) {
+                        inventory = { ...inventory, ...data.inventory };
+                    }
+
+                    // UI aktualisieren
+                    carrotCountEl.innerText = carrots;
+                    starCountEl.innerText = stars;
+
+                    if (totalStarsEarned === 1) {
+                        document.getElementById('level-display').innerText = "Level 2";
+                    } else if (totalStarsEarned >= 2) {
+                        document.getElementById('level-display').innerText = "Level 3";
+                    }
+
+                    // Gekaufte Items laden
+                    for (let item in inventory) {
+                        if (inventory[item]) {
+                            if (item === 'goldfur') {
+                                document.getElementById('alpaca-body').setAttribute('fill', '#ffd700');
+                            } else if (item === 'pinkfur') {
+                                document.getElementById('alpaca-body').setAttribute('fill', '#ffb3d9');
+                            } else {
+                                const element = document.getElementById('acc-' + item);
+                                if (element) element.style.display = 'block';
+                            }
+                            
+                            const btn = document.getElementById('btn-' + item);
+                            if (btn) {
+                                btn.innerText = "Gekauft! ✔️";
+                                btn.disabled = true;
+                                btn.style.backgroundColor = '#4CAF50';
+                                btn.style.boxShadow = '0 4px 0px #388E3C';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Speicherstand konnte nicht geladen werden.", e);
+                }
+            }
+        }
+        
+        // Speicherstand beim Starten der Seite laden
+        loadProgress();
+
+        // --- BUGFIX: Animationen nach Abspielen sauber aufräumen ---
+        flauschiSvg.addEventListener('animationend', (e) => {
+            if (['flip', 'ducking', 'chewing', 'jump'].includes(e.animationName)) {
+                flauschiSvg.classList.remove('backflip', 'duck', 'chew', 'bounce');
+            }
+        });
+
+        // Kleine Sätze, die Flauschi bei Erfolg sagt
+        const praiseSentences = [
+            "Mmh, lecker! Danke Nea!",
+            "Super gemacht!",
+            "Du bist ein Mathe-Profi!",
+            "Richtig! Noch eine Möhre für mich!",
+            "Wow, das war schnell!",
+            "Perfekt! Du hast es drauf!"
+        ];
+
+        // Sätze zum Aufmuntern bei Fehlern
+        const encourageSentences = [
+            "Oh, knapp daneben!",
+            "Versuch es gleich nochmal, Nea!",
+            "Lies noch mal ganz genau.",
+            "Nicht aufgeben, du schaffst das!",
+            "Ui, fast richtig!"
+        ];
+
+        // --- NEU: SPICKZETTEL FUNKTIONEN ---
+        let helpersVisible = false;
+
+        function createClockHelpers() {
+            // Sucht alle SVG-Uhren im Dokument
+            const clocks = document.querySelectorAll('.clock-container svg');
+            clocks.forEach(svg => {
+                if (svg.id === 'flauschi-svg') return; // Nicht bei Flauschi einfügen!
+
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "helpers-group");
+                g.style.opacity = "0"; // Am Anfang versteckt
+                g.style.transition = "opacity 0.3s";
+
+                // Zahlen 13 bis 24 (bzw. 00) im inneren Kreis anordnen
+                for (let i = 1; i <= 12; i++) {
+                    const num = i + 12; 
+                    const displayNum = num === 24 ? "00" : num;
+                    const angle = (i * 30) - 90; // 0 Grad ist 3 Uhr in Mathe, daher -90
+                    const rad = angle * (Math.PI / 180);
+                    const r = 32; // Radius für den inneren Spickzettel-Kreis
+                    const x = 50 + r * Math.cos(rad);
+                    const y = 50 + r * Math.sin(rad);
+
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", x);
+                    text.setAttribute("y", y + 3); // +3 für zentrierte Ausrichtung
+                    text.setAttribute("text-anchor", "middle");
+                    text.setAttribute("fill", "#999"); // Dezentes Grau
+                    text.setAttribute("font-size", "8px");
+                    text.setAttribute("font-weight", "bold");
+                    text.textContent = displayNum;
+                    g.appendChild(text);
+                }
+                svg.appendChild(g);
+            });
+        }
+
+        function toggleHelpers() {
+            helpersVisible = !helpersVisible;
+            const groups = document.querySelectorAll('.helpers-group');
+            groups.forEach(g => {
+                g.style.opacity = helpersVisible ? "1" : "0";
+            });
+            playSound('throw');
+        }
+
+        // --- SPIEL STARTEN ---
+        function startGame() {
+            // Audio initialisieren, wichtig für Tablets/Browser
+            initAudio();
+            playSound('throw');
+            
+            // Ansicht wechseln
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('task-area').style.display = 'block';
+            
+            // Spickzettel generieren
+            createClockHelpers();
+
+            flauschiText.innerText = "Lass uns anfangen! Tippe die Uhrzeit ein.";
+            generateTask();
+        }
+
+        // --- FUNKTION: AUFGABE RICHTIG GELÖST ---
+        function simulateCorrectAnswer(buttonElement) {
+            // Button kurz deaktivieren, damit Nea nicht doppelt tippt
+            buttonElement.disabled = true;
+            
+            // Sound für den Wurf abspielen
+            playSound('throw');
+
+            // Startposition für die fliegende Möhre (beim Button)
+            const rect = buttonElement.getBoundingClientRect();
+            const startX = rect.left + rect.width / 2;
+            const startY = rect.top + rect.height / 2;
+
+            // Fliegende Möhre erstellen
+            createFlyingItem('🥕', startX, startY, function() {
+                // Was passiert, wenn die Möhre bei Flauschi ankommt?
+                carrots++;
+                
+                // Kau-Sound abspielen
+                playSound('chew');
+
+                // Flauschi freut sich, kaut und macht einen Salto!
+                flauschiSvg.classList.remove('chew', 'backflip', 'duck', 'bounce');
+                void flauschiSvg.offsetWidth; // Trigger Reflow für Animation-Neustart
+                flauschiSvg.classList.add('backflip');
+                
+                // Zufälligen Lob-Text auswählen
+                const randomPraise = praiseSentences[Math.floor(Math.random() * praiseSentences.length)];
+                flauschiText.innerText = randomPraise;
+
+                // 10 Möhren erreicht? -> STERN!
+                if (carrots >= 10) {
+                    carrots = 0;
+                    carrotCountEl.innerText = carrots;
+                    awardStar();
+                } else {
+                    carrotCountEl.innerText = carrots;
+                }
+                
+                saveProgress(); // Fortschritt speichern
+
+                // Keine störenden Text-Wechsel mehr! Button wird nach Ablauf wieder aktiviert.
+                setTimeout(() => {
+                    buttonElement.disabled = false;
+                }, 4000); 
+            });
+        }
+
+        // --- FUNKTION: AUFGABE FALSCH GELÖST (MIT OPTIONALEM TIPP) ---
+        function simulateWrongAnswer(buttonElement, customHint = null) {
+            buttonElement.disabled = true;
+            
+            // Aufmunternden Sound abspielen
+            playSound('wrong');
+
+            // Flauschi duckt sich / zieht den Kopf ein
+            flauschiSvg.classList.remove('chew', 'backflip', 'duck', 'bounce');
+            void flauschiSvg.offsetWidth;
+            flauschiSvg.classList.add('duck');
+
+            // Spezifischen Tipp oder zufällige Aufmunterung ausgeben
+            if (customHint) {
+                flauschiText.innerText = customHint;
+            } else {
+                const randomEncourage = encourageSentences[Math.floor(Math.random() * encourageSentences.length)];
+                flauschiText.innerText = randomEncourage;
+            }
+
+            // Nach LÄNGERER Zeit Button wieder freigeben (damit Nea in Ruhe lesen kann)
+            setTimeout(() => {
+                buttonElement.disabled = false;
+                if(carrots > 0) {
+                    flauschiText.innerText = "Versuch's gleich noch einmal, Nea!";
+                } else {
+                    flauschiText.innerText = "Lies noch mal ganz genau!";
+                }
+            }, 4500); // 4,5 Sekunden Zeit zum Lesen des Tipps
+        }
+
+        // --- AUFGABEN LOGIK (Kreislauf) ---
+        let currentTaskType = 0; // Wir starten bei 0, nach Start wird es 1
+
+        let currentTaskHour = 0; 
+        let expectedHour24 = 0;  
+        let currentTaskMinute = 0;
+        let userInput = "";
+        
+        let userTask2Hour = 12;
+        let userTask2Minute = 0;
+
+        function generateTask() {
+            // Logik: Immer nacheinander: 1 -> 2 -> 3 -> 4 -> 1 ...
+            currentTaskType++;
+            if (currentTaskType > 4) {
+                currentTaskType = 1;
+            }
+            
+            // UIs umschalten (versteckt die ungenutzten Aufgaben)
+            document.getElementById('task-ui-1').style.display = currentTaskType === 1 ? 'block' : 'none';
+            document.getElementById('task-ui-2').style.display = currentTaskType === 2 ? 'block' : 'none';
+            document.getElementById('task-ui-3').style.display = currentTaskType === 3 ? 'block' : 'none';
+            document.getElementById('task-ui-4').style.display = currentTaskType === 4 ? 'block' : 'none';
+
+            // Spickzettel-Knopf bei Textaufgaben verstecken (da es dort keine Uhr gibt)
+            document.getElementById('help-btn').style.display = currentTaskType === 4 ? 'none' : 'inline-block';
+            
+            // Spickzettel bei jeder neuen Aufgabe automatisch ausblenden
+            helpersVisible = false;
+            document.querySelectorAll('.helpers-group').forEach(g => g.style.opacity = "0");
+
+            userInput = "";
+            updateDisplay();
+            
+            // Echte 24-Stunden Zeit generieren (0 bis 23 Uhr)
+            expectedHour24 = Math.floor(Math.random() * 24);
+            
+            // Für die analoge Anzeige auf 1-12 Uhr umrechnen
+            currentTaskHour = expectedHour24 % 12;
+            if (currentTaskHour === 0) currentTaskHour = 12;
+            
+            // --- STUFEN-SYSTEM (Adaptive Schwierigkeit) ---
+            let minuteOptions = [0]; // Level 1 (0 Sterne): Nur volle Stunden
+            if (totalStarsEarned === 1) {
+                minuteOptions = [0, 30]; // Level 2 (1 Stern): Volle und halbe Stunden
+            } else if (totalStarsEarned >= 2) {
+                minuteOptions = [0, 15, 30, 45]; // Level 3 (ab 2 Sternen): Alle Viertelstunden
+            }
+            
+            currentTaskMinute = minuteOptions[Math.floor(Math.random() * minuteOptions.length)];
+            
+            // Flex & Flo Tageszeiten und Symbole bestimmen
+            let timeTerm = "";
+            let timeSymbol = "";
+
+            if (expectedHour24 >= 22 || expectedHour24 < 5) {
+                timeTerm = "nachts"; 
+                timeSymbol = "🌙";
+            } else if (expectedHour24 >= 5 && expectedHour24 < 10) {
+                timeTerm = "morgens"; 
+                timeSymbol = "☀️";
+            } else if (expectedHour24 >= 10 && expectedHour24 < 12) {
+                timeTerm = "vormittags"; 
+                timeSymbol = "☀️";
+            } else if (expectedHour24 >= 12 && expectedHour24 < 14) {
+                timeTerm = "mittags"; 
+                timeSymbol = "☀️";
+            } else if (expectedHour24 >= 14 && expectedHour24 < 18) {
+                timeTerm = "nachmittags"; 
+                timeSymbol = "☀️";
+            } else {
+                timeTerm = "abends"; 
+                timeSymbol = "🌙";
+            }
+            
+            if (currentTaskType === 1) {
+                // TASK TYP 1
+                document.getElementById('task-question').innerText = `Wie spät ist es? (${timeTerm} ${timeSymbol})`;
+                
+                // Zeiger berechnen
+                const hourAngle = (currentTaskHour % 12) * 30 + (currentTaskMinute / 60) * 30;
+                const minuteAngle = currentTaskMinute * 6;
+                document.getElementById('hour-hand').setAttribute('transform', `rotate(${hourAngle}, 50, 50)`);
+                document.getElementById('minute-hand').setAttribute('transform', `rotate(${minuteAngle}, 50, 50)`);
+                
+                flauschiText.innerText = "Tippe die richtige Uhrzeit ein!";
+            } else if (currentTaskType === 2) {
+                // TASK TYP 2
+                const expectedStr = String(expectedHour24).padStart(2, '0') + ":" + String(currentTaskMinute).padStart(2, '0');
+                
+                document.getElementById('task-question').innerHTML = `Stelle die Uhr auf <br> ${expectedStr} Uhr (${timeTerm} ${timeSymbol})`;
+                
+                // Zeiger von Nea auf 12:00 zurücksetzen
+                userTask2Hour = 12;
+                userTask2Minute = 0;
+                updateClock2();
+                
+                flauschiText.innerText = "Klicke auf + und - um die Zeiger zu drehen!";
+            } else if (currentTaskType === 3) {
+                // TASK TYP 3 (Zuordnen)
+                document.getElementById('task-question').innerText = `Welche Uhrzeit passt? (${timeTerm} ${timeSymbol})`;
+                
+                const hourAngle = (currentTaskHour % 12) * 30 + (currentTaskMinute / 60) * 30;
+                const minuteAngle = currentTaskMinute * 6;
+                document.getElementById('hour-hand-3').setAttribute('transform', `rotate(${hourAngle}, 50, 50)`);
+                document.getElementById('minute-hand-3').setAttribute('transform', `rotate(${minuteAngle}, 50, 50)`);
+                
+                const expectedStr = String(expectedHour24).padStart(2, '0') + ":" + String(currentTaskMinute).padStart(2, '0');
+                
+                let options = [expectedStr];
+                while(options.length < 3) {
+                    let rH = Math.floor(Math.random() * 24);
+                    let rM = minuteOptions[Math.floor(Math.random() * minuteOptions.length)];
+                    let rStr = String(rH).padStart(2, '0') + ":" + String(rM).padStart(2, '0');
+                    if(!options.includes(rStr)) {
+                        options.push(rStr);
+                    }
+                }
+                
+                options.sort(() => Math.random() - 0.5);
+                
+                const container = document.getElementById('mc-buttons-container');
+                container.innerHTML = ''; 
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.innerText = opt + " Uhr";
+                    btn.onclick = function() { checkAnswerTask3(this, opt, expectedStr); };
+                    container.appendChild(btn);
+                });
+                
+                flauschiText.innerText = "Tippe auf die richtige digitale Uhrzeit!";
+            } else if (currentTaskType === 4) {
+                // TASK TYP 4 (Textaufgaben)
+                document.getElementById('task-question').innerText = "Kleine Aufgabe lesen 📖";
+                
+                const scenarios = [
+                    { text: "Flauschi fängt um {start} an, auf der Wiese zu spielen. Er spielt {duration}. Wann ist er fertig?", durationMin: 60, durationText: "1 Stunde" },
+                    { text: "Flauschi macht um {start} ein Nickerchen. Er schläft genau {duration}. Wann wacht er wieder auf?", durationMin: 30, durationText: "eine halbe Stunde" },
+                    { text: "Der Schwimmkurs von Flauschi beginnt um {start}. Er dauert {duration}. Wann ist der Kurs zu Ende?", durationMin: 120, durationText: "2 Stunden" },
+                    { text: "Flauschi isst einen großen Möhrensalat. Er beginnt um {start} und braucht {duration} dafür. Wann ist er satt?", durationMin: 60, durationText: "1 Stunde" }
+                ];
+                
+                // Wir starten tagsüber, damit es logisch bleibt (zwischen 8 und 15 Uhr)
+                let startHour = Math.floor(Math.random() * 8) + 8; 
+                
+                // Stufen-System auch für Textaufgaben-Startzeit anwenden
+                let startMinOptions = [0]; 
+                if (totalStarsEarned >= 1) {
+                    startMinOptions = [0, 30]; 
+                }
+                let startMin = startMinOptions[Math.floor(Math.random() * startMinOptions.length)]; 
+                
+                // In Level 1 (0 Sterne) nur Textaufgaben mit vollen Stunden auswählen
+                let availableScenarios = scenarios;
+                if (totalStarsEarned === 0) {
+                    availableScenarios = scenarios.filter(s => s.durationMin % 60 === 0);
+                }
+                let scenario = availableScenarios[Math.floor(Math.random() * availableScenarios.length)];
+                
+                let startStr = String(startHour).padStart(2, '0') + ":" + String(startMin).padStart(2, '0') + " Uhr";
+                let storyText = scenario.text.replace("{start}", startStr).replace("{duration}", scenario.durationText);
+                
+                // Richtige Endzeit ausrechnen
+                let totalMins = startHour * 60 + startMin + scenario.durationMin;
+                let endHour = Math.floor(totalMins / 60) % 24;
+                let endMin = totalMins % 60;
+                let endStr = String(endHour).padStart(2, '0') + ":" + String(endMin).padStart(2, '0');
+                
+                document.getElementById('task4-story').innerText = storyText;
+                
+                // 3 Antwort-Optionen generieren
+                let options = [endStr];
+                while(options.length < 3) {
+                    // Falsche Stunden (etwas in der Nähe)
+                    let rH = endHour + (Math.floor(Math.random() * 3) - 1); 
+                    if (rH < 0) rH = 23;
+                    let rM = startMinOptions[Math.floor(Math.random() * startMinOptions.length)];
+                    let rStr = String(rH).padStart(2, '0') + ":" + String(rM).padStart(2, '0');
+                    if(!options.includes(rStr)) {
+                        options.push(rStr);
+                    }
+                }
+                
+                options.sort(() => Math.random() - 0.5);
+                
+                const container = document.getElementById('mc-buttons-container-4');
+                container.innerHTML = ''; 
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.innerText = opt + " Uhr";
+                    btn.onclick = function() { checkAnswerTask4(this, opt, endStr); };
+                    container.appendChild(btn);
+                });
+                
+                flauschiText.innerText = "Lies die Geschichte und tippe auf die richtige Uhrzeit!";
+            }
+        }
+
+        // --- FUNKTIONEN FÜR TASK 4 (Textaufgaben) ---
+        function checkAnswerTask4(buttonElement, selectedStr, expectedStr) {
+            const allBtns = document.querySelectorAll('#mc-buttons-container-4 button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedStr === expectedStr) {
+                buttonElement.style.backgroundColor = '#4CAF50';
+                buttonElement.style.color = 'white';
+                simulateCorrectAnswer(buttonElement);
+                setTimeout(generateTask, 6000); // Auf 6 Sekunden erhöht für viel Lesezeit!
+            } else {
+                buttonElement.style.backgroundColor = '#f44336';
+                buttonElement.style.color = 'white';
+                simulateWrongAnswer(buttonElement);
+                
+                setTimeout(() => {
+                    buttonElement.style.backgroundColor = 'var(--box-white)';
+                    buttonElement.style.color = 'var(--flauschi-blue)';
+                    allBtns.forEach(b => b.disabled = false);
+                }, 4500); // An den neuen Tipp-Timer angepasst
+            }
+        }
+
+        // --- FUNKTIONEN FÜR TASK 3 (Zuordnen / Multiple Choice) ---
+        function checkAnswerTask3(buttonElement, selectedStr, expectedStr) {
+            const allBtns = document.querySelectorAll('#mc-buttons-container button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedStr === expectedStr) {
+                buttonElement.style.backgroundColor = '#4CAF50';
+                buttonElement.style.color = 'white';
+                simulateCorrectAnswer(buttonElement);
+                setTimeout(generateTask, 6000); // Auf 6 Sekunden erhöht für viel Lesezeit!
+            } else {
+                buttonElement.style.backgroundColor = '#f44336';
+                buttonElement.style.color = 'white';
+                simulateWrongAnswer(buttonElement);
+                
+                setTimeout(() => {
+                    buttonElement.style.backgroundColor = 'var(--box-white)';
+                    buttonElement.style.color = 'var(--flauschi-blue)';
+                    allBtns.forEach(b => b.disabled = false);
+                }, 4500); // An den neuen Tipp-Timer angepasst
+            }
+        }
+
+        // --- FUNKTIONEN FÜR TASK 2 (Zeiger einstellen) ---
+        function adjustTime(unit, amount) {
+            playSound('throw'); 
+            if (unit === 'h') {
+                userTask2Hour += amount;
+                if (userTask2Hour < 1) userTask2Hour = 12;
+                if (userTask2Hour > 12) userTask2Hour = 1;
+            } else if (unit === 'm') {
+                userTask2Minute += amount;
+                if (userTask2Minute < 0) {
+                    userTask2Minute = 45;
+                }
+                if (userTask2Minute >= 60) {
+                    userTask2Minute = 0;
+                }
+            }
+            updateClock2();
+        }
+
+        function updateClock2() {
+            const hourAngle = (userTask2Hour % 12) * 30 + (userTask2Minute / 60) * 30;
+            const minuteAngle = userTask2Minute * 6;
+            
+            document.getElementById('hour-hand-2').setAttribute('transform', `rotate(${hourAngle}, 50, 50)`);
+            document.getElementById('minute-hand-2').setAttribute('transform', `rotate(${minuteAngle}, 50, 50)`);
+        }
+
+        function checkAnswerTask2() {
+            const btnOk = document.querySelector('#task-ui-2 .btn-ok');
+            
+            let expectedH = currentTaskHour % 12; 
+            let userH = userTask2Hour % 12;       
+            
+            if (expectedH === userH && currentTaskMinute === userTask2Minute) {
+                simulateCorrectAnswer(btnOk);
+                setTimeout(generateTask, 6000); // Auf 6 Sekunden erhöht für viel Lesezeit!
+            } else {
+                // Fehler-Analyse für individuelle Tipps
+                let customHint = null;
+                if (expectedH === userH && currentTaskMinute !== userTask2Minute) {
+                    customHint = "Die Stunden stimmen schon, aber schau noch mal auf die Minuten!";
+                } else if (expectedH !== userH && currentTaskMinute === userTask2Minute) {
+                    customHint = "Die Minuten sind super, aber prüfe noch mal den Stundenzeiger!";
+                }
+                
+                simulateWrongAnswer(btnOk, customHint);
+            }
+        }
+
+        // --- FUNKTIONEN FÜR TASK 1 (Zahlenpad) ---
+        function pressNumpad(num) {
+            if (userInput.length < 4) {
+                userInput += num;
+                updateDisplay();
+                playSound('throw'); 
+            }
+        }
+
+        function pressDel() {
+            if (userInput.length > 0) {
+                userInput = userInput.slice(0, -1);
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            let displayStr = userInput.padEnd(4, '_');
+            document.getElementById('digital-input').innerText = `${displayStr[0]}${displayStr[1]} : ${displayStr[2]}${displayStr[3]} Uhr`;
+        }
+
+        function checkAnswer() {
+            if (userInput.length !== 4) {
+                flauschiText.innerText = "Bitte tippe genau 4 Zahlen ein!";
+                return;
+            }
+            
+            const expectedStr = String(expectedHour24).padStart(2, '0') + String(currentTaskMinute).padStart(2, '0');
+            const btnOk = document.querySelector('#task-ui-1 .btn-ok');
+            
+            if (userInput === expectedStr) {
+                simulateCorrectAnswer(btnOk);
+                setTimeout(generateTask, 6000); // Auf 6 Sekunden erhöht für viel Lesezeit!
+            } else {
+                // Fehler-Analyse für den Vormittag/Nachmittag-Fehler
+                let customHint = null;
+                let userH = parseInt(userInput.substring(0,2));
+                let userM = parseInt(userInput.substring(2,4));
+                
+                if (userM === currentTaskMinute) {
+                    if (userH === expectedHour24 - 12) {
+                        customHint = "Fast! Schau auf das Symbol, es ist doch die 2. Tageshälfte!";
+                    } else if (userH === expectedHour24 + 12) {
+                        customHint = "Fast! Schau auf das Symbol, es ist doch die 1. Tageshälfte!";
+                    }
+                }
+                
+                simulateWrongAnswer(btnOk, customHint);
+                
+                setTimeout(() => {
+                    userInput = "";
+                    updateDisplay();
+                }, 4500); // An den neuen Tipp-Timer angepasst
+            }
+        }
+
+        // --- FUNKTION: FLIEGENDES ITEM (Möhre oder Stern) ---
+        function createFlyingItem(emoji, startX, startY, onArriveCallback) {
+            const item = document.createElement('div');
+            item.className = 'flying-item';
+            item.innerText = emoji;
+            item.style.left = startX + 'px';
+            item.style.top = startY + 'px';
+            document.body.appendChild(item);
+
+            let targetX, targetY;
+
+            if (emoji === '🥕') {
+                const flauschiRect = flauschiSvg.getBoundingClientRect();
+                targetX = flauschiRect.right - 40; 
+                targetY = flauschiRect.top + 50;
+            } else if (emoji === '⭐') {
+                const starBoxRect = document.getElementById('star-counter-box').getBoundingClientRect();
+                targetX = starBoxRect.left + 20;
+                targetY = starBoxRect.top + 10;
+            }
+
+            setTimeout(() => {
+                item.style.left = targetX + 'px';
+                item.style.top = targetY + 'px';
+                item.style.transform = 'scale(0.5)'; 
+                item.style.opacity = '0.5';
+
+                setTimeout(() => {
+                    document.body.removeChild(item);
+                    if(onArriveCallback) onArriveCallback();
+                }, 800); 
+            }, 50);
+        }
+
+        // --- FUNKTION: STERN VERGEBEN ---
+        function awardStar() {
+            flauschiText.innerText = "JUHU! 10 Möhren! Ein Stern für dich, Nea!";
+            
+            playSound('star');
+
+            flauschiSvg.classList.remove('bounce');
+            void flauschiSvg.offsetWidth;
+            flauschiSvg.classList.add('bounce');
+
+            const flauschiRect = flauschiSvg.getBoundingClientRect();
+            const startX = flauschiRect.left + flauschiRect.width / 2;
+            const startY = flauschiRect.top;
+
+            createFlyingItem('⭐', startX, startY, function() {
+                stars++;
+                totalStarsEarned++; // Auch den Gesamt-Zähler erhöhen
+                starCountEl.innerText = stars;
+
+                // Level-Up Info nach dem Stern für Nea! (Jetzt mit etwas Verzögerung, damit sie das "Juhu!" lesen kann)
+                if (totalStarsEarned === 1) {
+                    document.getElementById('level-display').innerText = "Level 2";
+                    setTimeout(() => flauschiText.innerText = "JUHU! Level 2: Halbe Stunden sind freigeschaltet!", 2500);
+                } else if (totalStarsEarned === 2) {
+                    document.getElementById('level-display').innerText = "Level 3";
+                    setTimeout(() => flauschiText.innerText = "WOW! Level 3: Viertelstunden sind freigeschaltet!", 2500);
+                }
+                
+                const starBox = document.getElementById('star-counter-box');
+                starBox.classList.remove('pulse-star');
+                void starBox.offsetWidth;
+                starBox.classList.add('pulse-star');
+                
+                saveProgress(); // Fortschritt speichern
+            });
+        }
+
+        // --- NEU: SHOP FUNKTIONEN ---
+        function openShop() {
+            document.getElementById('shop-modal').style.display = 'flex';
+            playSound('throw');
+        }
+
+        function closeShop() {
+            document.getElementById('shop-modal').style.display = 'none';
+            playSound('throw');
+        }
+
+        function buyItem(item, price) {
+            if (inventory[item]) return; // Schon gekauft
+            
+            if (stars >= price) {
+                // Kaufen erfolgreich
+                stars -= price;
+                starCountEl.innerText = stars;
+                inventory[item] = true;
+                
+                // --- Spezialfälle (Farben) vs. normale SVG Objekte anzeigen ---
+                if (item === 'goldfur') {
+                    document.getElementById('alpaca-body').setAttribute('fill', '#ffd700');
+                } else if (item === 'pinkfur') {
+                    document.getElementById('alpaca-body').setAttribute('fill', '#ffb3d9');
+                } else {
+                    document.getElementById('acc-' + item).style.display = 'block';
+                }
+                
+                // Button deaktivieren
+                const btn = document.getElementById('btn-' + item);
+                btn.innerText = "Gekauft! ✔️";
+                btn.disabled = true;
+                btn.style.backgroundColor = '#4CAF50';
+                btn.style.boxShadow = '0 4px 0px #388E3C';
+                
+                playSound('star'); // Erfolgs-Sound
+                
+                // Flauschi freut sich
+                flauschiSvg.classList.remove('bounce');
+                void flauschiSvg.offsetWidth;
+                flauschiSvg.classList.add('bounce');
+                flauschiText.innerText = "Wow, das sieht toll aus! Danke, Nea!";
+                
+                saveProgress(); // Gekauften Gegenstand speichern
+                
+            } else {
+                // Nicht genug Sterne
+                playSound('wrong');
+                flauschiText.innerText = `Oh, dafür brauchst du ${price} Sterne. Du hast erst ${stars}.`;
+                closeShop(); // Shop kurz schließen, damit Nea die Nachricht sieht
+            }
+        }
+
+        // --- VERSTECKTER RESET (ELTERN-FUNKTION) ---
+        let resetClickCount = 0;
+        let resetTimer;
+
+        function handleResetClick() {
+            resetClickCount++;
+            clearTimeout(resetTimer);
+
+            if (resetClickCount >= 5) {
+                // Sicherheitsabfrage, wenn 5 mal getippt wurde
+                if (confirm("Eltern-Bereich: Möchtest du den Spielstand wirklich komplett zurücksetzen? Alle Sterne, Möhren und Kleidungsstücke gehen verloren.")) {
+                    localStorage.removeItem('flauschiProgress');
+                    location.reload(); // Seite neu laden, um bei Null zu starten
+                }
+                resetClickCount = 0;
+            } else {
+                // Wenn nicht innerhalb von 2 Sekunden 5 mal getippt wird, Zähler zurücksetzen
+                resetTimer = setTimeout(() => {
+                    resetClickCount = 0;
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
