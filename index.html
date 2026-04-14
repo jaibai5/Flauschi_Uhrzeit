@@ -18,7 +18,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif; /* Kinderfreundliche Schriftarten */
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
             touch-action: manipulation; /* Macht das Tippen auf dem Tablet flüssiger */
         }
 
@@ -27,84 +27,83 @@
             padding: 0;
             background-color: var(--bg-blue);
             color: var(--text-dark);
-            min-height: 100vh; /* Tablet-Fix: Flexibel statt starr */
+            height: 100vh; /* Tablet-Fix: Nutze die exakte Höhe */
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            overflow-y: auto; /* Tablet-Fix: Erlaubt leichtes Scrollen, falls der Browser-Rand zu groß ist */
+            overflow-y: auto; /* Erlaubt Scrollen, falls der Bildschirm doch zu klein ist */
         }
 
         /* --- KOPFZEILE (BELOHNUNGEN) --- */
         header {
             display: flex;
             justify-content: space-between;
-            padding: 15px 25px;
+            padding: 8px 12px; /* Tablet-Fix: Kompakter */
             background-color: rgba(255, 255, 255, 0.6);
             border-bottom: 3px solid white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             z-index: 10;
+            gap: 5px;
         }
 
         .counter-box {
             display: flex;
             align-items: center;
             background: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 24px;
+            padding: 4px 10px; /* Tablet-Fix: Kompakter */
+            border-radius: 20px;
+            font-size: 16px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
             box-shadow: 0 4px 0px rgba(0,0,0,0.1);
             border: 2px solid #eee;
         }
 
         .counter-icon {
-            font-size: 32px;
-            margin-right: 10px;
+            font-size: 20px; /* Tablet-Fix: Kompakter */
+            margin-right: 4px;
         }
 
-        #star-counter-box { border-color: #ffd700; }
-        #carrot-counter-box { border-color: #ff9800; }
-
-        /* --- NEU: Level Anzeige & Shop --- */
+        /* --- LEVEL ANZEIGE & SHOP --- */
         .level-box {
             background: var(--flauschi-blue);
             color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 24px;
+            padding: 4px 12px; /* Tablet-Fix: Kompakter */
+            border-radius: 20px;
+            font-size: 16px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
             box-shadow: 0 4px 0px rgba(0,0,0,0.2);
             text-align: center;
+            cursor: pointer;
         }
 
         #shop-btn {
             background: #9c27b0;
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 0 15px;
-            font-size: 20px;
+            border-radius: 15px;
+            padding: 0 10px; /* Tablet-Fix: Kompakter */
+            font-size: 16px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 5px 0px #7b1fa2;
+            box-shadow: 0 4px 0px #7b1fa2;
             transition: all 0.1s;
         }
         #shop-btn:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
             box-shadow: 0 0px 0px #7b1fa2;
         }
 
         #shop-content {
             background: white;
-            padding: 30px;
-            border-radius: 25px;
+            padding: 20px; /* Tablet-Fix: Kompakter */
+            border-radius: 20px;
             text-align: center;
             max-width: 450px;
             width: 90%;
             border: 4px solid var(--flauschi-blue);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            max-height: 85vh;
-            overflow-y: auto; /* Erlaubt das Scrollen, wenn es viele Items gibt! */
+            max-height: 80vh;
+            overflow-y: auto; 
         }
 
         .shop-item {
@@ -112,30 +111,30 @@
             justify-content: space-between;
             align-items: center;
             background: #f0f8ff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 15px;
-            font-size: 20px;
+            padding: 10px; /* Tablet-Fix: Kompakter */
+            margin-bottom: 8px; /* Tablet-Fix: Kompakter */
+            border-radius: 10px;
+            font-size: 16px; /* Tablet-Fix: Kompakter */
             border: 2px solid #b3e5fc;
         }
         .shop-item button {
             background: #ff9800;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 18px;
+            padding: 6px 12px; /* Tablet-Fix: Kompakter */
+            border-radius: 8px;
+            font-size: 14px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 0px #e65100;
+            box-shadow: 0 3px 0px #e65100;
         }
         .shop-item button:active {
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: 0 0px 0px #e65100;
         }
         .shop-item button:disabled {
             background: #ccc;
-            box-shadow: 0 4px 0px #aaa;
+            box-shadow: 0 3px 0px #aaa;
             cursor: not-allowed;
         }
 
@@ -145,27 +144,34 @@
             display: flex;
             flex-direction: column; /* Tablet-Fix: Standardmäßig untereinander */
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            justify-content: flex-start; /* Start am oberen Rand, um Platz optimal zu nutzen */
+            padding: 10px 5px; /* Tablet-Fix: Kompakter */
             position: relative;
-            gap: 30px; /* Abstand zwischen Flauschi und Aufgabe */
+            gap: 10px; /* Tablet-Fix: Weniger Abstand zwischen Flauschi und Aufgabe */
         }
 
         .task-container {
             background: var(--box-white);
             width: 100%;
-            max-width: 600px;
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            padding: 15px 20px; /* Tablet-Fix: Kompakter */
+            border-radius: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
             text-align: center;
-            border: 4px solid white;
+            border: 3px solid white;
             order: 1; /* Tablet-Fix: Aufgabe immer zuerst/oben */
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 24px; /* Tablet-Fix: Kompakter */
             color: var(--flauschi-blue);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        h2#task-question, h2 {
+            font-size: 18px !important; /* Tablet-Fix: Kompakter */
+            margin-bottom: 8px !important;
             margin-top: 0;
         }
 
@@ -174,66 +180,66 @@
             background-color: var(--primary-btn);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 22px;
-            border-radius: 15px;
+            padding: 10px 25px !important; /* Tablet-Fix: Kompakter, überschreibt Inline-Styles */
+            font-size: 18px !important; /* Tablet-Fix: Kompakter */
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 5px 0px #2e7d32;
+            box-shadow: 0 4px 0px #2e7d32;
             transition: transform 0.1s, box-shadow 0.1s;
-            margin-top: 20px;
+            margin-top: 10px !important;
         }
 
         .btn-test:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
             box-shadow: 0 0px 0px #2e7d32;
         }
 
-        /* --- NEU: SPICKZETTEL-BUTTON --- */
+        /* --- SPICKZETTEL-BUTTON --- */
         .btn-help {
             background-color: #ffc107;
             color: #333;
             border: none;
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 6px 12px; /* Tablet-Fix: Kompakter */
+            font-size: 14px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 4px 0px #ffa000;
-            margin-bottom: 15px;
+            box-shadow: 0 3px 0px #ffa000;
+            margin-bottom: 10px;
             transition: all 0.1s;
         }
         .btn-help:active {
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: 0 0px 0px #ffa000;
         }
 
-        /* --- SCHRITT 2: TASK-STYLES (Uhr & Nummernblock) --- */
+        /* --- TASK-STYLES (Uhr & Nummernblock) --- */
         .clock-container {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px auto;
+            width: 120px; /* Tablet-Fix: Kompakter */
+            height: 120px; /* Tablet-Fix: Kompakter */
+            margin: 0 auto 10px auto;
             position: relative;
         }
 
         .digital-display {
-            font-size: 36px;
+            font-size: 26px; /* Tablet-Fix: Kompakter */
             font-family: monospace;
             font-weight: bold;
             color: var(--flauschi-blue);
             background: #eee;
-            padding: 10px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 6px 15px; /* Tablet-Fix: Kompakter */
+            border-radius: 12px;
+            margin-bottom: 12px;
             display: inline-block;
-            min-width: 180px;
+            min-width: 140px;
             border: 3px inset #ccc;
         }
 
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            max-width: 280px;
+            gap: 6px; /* Tablet-Fix: Kompakter */
+            max-width: 220px;
             margin: 0 auto;
         }
 
@@ -241,28 +247,28 @@
             background-color: var(--primary-btn);
             color: white;
             border: none;
-            padding: 15px;
-            font-size: 24px;
-            border-radius: 12px;
-            box-shadow: 0 5px 0px var(--primary-btn-hover);
+            padding: 8px; /* Tablet-Fix: Kompakter */
+            font-size: 20px; /* Tablet-Fix: Kompakter */
+            border-radius: 10px;
+            box-shadow: 0 4px 0px var(--primary-btn-hover);
             cursor: pointer;
-            touch-action: manipulation; /* Wichtig fürs Tablet! Verhindert Verzögerungen beim Tippen */
+            touch-action: manipulation; 
         }
 
         .numpad button:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
             box-shadow: 0 0px 0px var(--primary-btn-hover);
         }
 
-        .numpad .btn-del { background-color: #ff9800; box-shadow: 0 5px 0px #e68a00; }
-        .numpad .btn-ok { background-color: #2196F3; box-shadow: 0 5px 0px #1976D2; }
+        .numpad .btn-del { background-color: #ff9800; box-shadow: 0 4px 0px #e68a00; }
+        .numpad .btn-ok { background-color: #2196F3; box-shadow: 0 4px 0px #1976D2; }
 
-        /* --- SCHRITT 3: TASK 2 STYLES (Zeiger einstellen) --- */
+        /* --- TASK 2 STYLES (Zeiger einstellen) --- */
         .adjust-controls {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 20px;
-            max-width: 350px;
+            margin-bottom: 15px; /* Tablet-Fix: Kompakter */
+            max-width: 280px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -272,18 +278,18 @@
             align-items: center;
         }
         .adjust-group span {
-            font-size: 20px;
-            margin: 5px 0;
+            font-size: 14px; /* Tablet-Fix: Kompakter */
+            margin: 2px 0;
             font-weight: bold;
         }
         .adjust-group button {
             color: white;
             border: none;
-            width: 60px;
-            height: 50px;
-            font-size: 32px;
+            width: 45px; /* Tablet-Fix: Kompakter */
+            height: 35px; /* Tablet-Fix: Kompakter */
+            font-size: 24px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             touch-action: manipulation;
             display: flex;
@@ -291,71 +297,72 @@
             justify-content: center;
         }
         .adjust-group button:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
         }
         
-        /* Rot für Stundenzeiger (pädagogische Farbzuordnung) */
-        .adjust-group.hours button { background-color: #ff4d4d; box-shadow: 0 5px 0px #cc0000; }
+        .adjust-group.hours button { background-color: #ff4d4d; box-shadow: 0 4px 0px #cc0000; }
         .adjust-group.hours span { color: #ff4d4d; }
         .adjust-group.hours button:active { box-shadow: 0 0px 0px #cc0000; }
 
-        /* Blau für Minutenzeiger (pädagogische Farbzuordnung) */
-        .adjust-group.mins button { background-color: #3399ff; box-shadow: 0 5px 0px #0066cc; }
+        .adjust-group.mins button { background-color: #3399ff; box-shadow: 0 4px 0px #0066cc; }
         .adjust-group.mins span { color: #3399ff; }
         .adjust-group.mins button:active { box-shadow: 0 0px 0px #0066cc; }
 
-        /* --- SCHRITT 4 & 5: TASK 3 & 4 STYLES (Multiple Choice) --- */
+        /* --- TASK 3 & 4 STYLES (Multiple Choice) --- */
         .mc-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            max-width: 300px;
+            gap: 8px; /* Tablet-Fix: Kompakter */
+            max-width: 260px;
             margin: 0 auto;
         }
         .mc-options button {
             background-color: var(--box-white);
             color: var(--flauschi-blue);
             border: 3px solid var(--primary-btn);
-            padding: 15px;
-            font-size: 26px;
+            padding: 8px; /* Tablet-Fix: Kompakter */
+            font-size: 18px; /* Tablet-Fix: Kompakter */
             font-weight: bold;
-            border-radius: 15px;
-            box-shadow: 0 5px 0px var(--primary-btn-hover);
+            border-radius: 12px;
+            box-shadow: 0 4px 0px var(--primary-btn-hover);
             cursor: pointer;
             transition: all 0.1s;
         }
         .mc-options button:active {
-            transform: translateY(5px);
+            transform: translateY(4px);
             box-shadow: 0 0px 0px var(--primary-btn-hover);
         }
 
         .story-box {
-            font-size: 22px;
-            margin-bottom: 25px;
-            padding: 20px;
+            font-size: 16px; /* Tablet-Fix: Kompakter */
+            margin-bottom: 15px; /* Tablet-Fix: Kompakter */
+            padding: 12px; /* Tablet-Fix: Kompakter */
             background-color: #f9f9f9;
-            border-radius: 15px;
+            border-radius: 12px;
             border: 2px dashed var(--flauschi-blue);
             text-align: left;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         /* --- FLAUSCHI BEREICH (Tablet-Fix: Flexibel integriert) --- */
         #flauschi-area {
-            position: relative; /* Tablet-Fix: Keine absolute Position mehr, die Tastatur verdeckt */
+            position: relative; /* Tablet-Fix: Keine absolute Position mehr */
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 250px;
+            width: 200px; /* Tablet-Fix: Kompakter */
             order: 2; /* Tablet-Fix: Flauschi unter die Aufgabe im Hochformat */
             z-index: 5;
         }
 
-        /* --- NEU: QUERFORMAT (Landscape) Tablet-Fix --- */
-        @media (min-width: 820px) {
+        /* --- QUERFORMAT (Landscape) Tablet-Fix --- */
+        @media (min-width: 700px) { /* Früherer Wechsel in Querformat für Tablets */
             main {
-                flex-direction: row; /* Nebeneinander, wenn genug Platz ist */
-                align-items: flex-end;
+                flex-direction: row; /* Nebeneinander */
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
+                padding: 20px;
             }
             #flauschi-area {
                 order: 1; /* Flauschi wieder auf die linke Seite */
@@ -368,14 +375,14 @@
         /* Die Sprechblase */
         .speech-bubble {
             background: white;
-            border-radius: 20px;
-            padding: 15px;
-            font-size: 18px;
+            border-radius: 15px;
+            padding: 8px 12px; /* Tablet-Fix: Kompakter */
+            font-size: 14px; /* Tablet-Fix: Kompakter */
             text-align: center;
             position: relative;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-            border: 3px solid #ffd700;
+            margin-bottom: 8px; /* Tablet-Fix: Kompakter */
+            border: 2px solid #ffd700;
             width: 100%;
             animation: float 3s ease-in-out infinite;
         }
@@ -383,16 +390,16 @@
         .speech-bubble::after {
             content: '';
             position: absolute;
-            bottom: -15px;
-            right: 40px;
-            border-width: 15px 15px 0 0;
+            bottom: -8px;
+            right: 30px;
+            border-width: 8px 8px 0 0;
             border-style: solid;
             border-color: white transparent transparent transparent;
         }
 
         /* Flauschi SVG Container */
         #flauschi-svg {
-            width: 180px;
+            width: 120px; /* Tablet-Fix: Kompakter (von 180px) */
             height: auto;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
