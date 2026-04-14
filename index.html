@@ -27,10 +27,11 @@
             padding: 0;
             background-color: var(--bg-blue);
             color: var(--text-dark);
-            height: 100vh;
+            min-height: 100vh; /* Tablet-Fix: Flexibel statt starr */
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Kein Scrollen auf dem Tablet */
+            overflow-x: hidden;
+            overflow-y: auto; /* Tablet-Fix: Erlaubt leichtes Scrollen, falls der Browser-Rand zu groß ist */
         }
 
         /* --- KOPFZEILE (BELOHNUNGEN) --- */
@@ -142,11 +143,12 @@
         main {
             flex-grow: 1;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Tablet-Fix: Standardmäßig untereinander */
             align-items: center;
             justify-content: center;
             padding: 20px;
             position: relative;
+            gap: 30px; /* Abstand zwischen Flauschi und Aufgabe */
         }
 
         .task-container {
@@ -158,6 +160,7 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
             text-align: center;
             border: 4px solid white;
+            order: 1; /* Tablet-Fix: Aufgabe immer zuerst/oben */
         }
 
         h1 {
@@ -337,15 +340,29 @@
             line-height: 1.4;
         }
 
-        /* --- FLAUSCHI BEREICH (UNTEN LINKS) --- */
+        /* --- FLAUSCHI BEREICH (Tablet-Fix: Flexibel integriert) --- */
         #flauschi-area {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
+            position: relative; /* Tablet-Fix: Keine absolute Position mehr, die Tastatur verdeckt */
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 250px;
+            order: 2; /* Tablet-Fix: Flauschi unter die Aufgabe im Hochformat */
+            z-index: 5;
+        }
+
+        /* --- NEU: QUERFORMAT (Landscape) Tablet-Fix --- */
+        @media (min-width: 820px) {
+            main {
+                flex-direction: row; /* Nebeneinander, wenn genug Platz ist */
+                align-items: flex-end;
+            }
+            #flauschi-area {
+                order: 1; /* Flauschi wieder auf die linke Seite */
+            }
+            .task-container {
+                order: 2; /* Aufgabe auf die rechte Seite */
+            }
         }
 
         /* Die Sprechblase */
@@ -480,7 +497,6 @@
             <button id="shop-btn" onclick="openShop()">🛍️ Shop</button>
             <div class="counter-box" id="star-counter-box">
                 <span class="counter-icon">⭐</span>
-                <!-- STERNE SIND WIEDER AUF 0 -->
                 <span id="star-count">0</span>
             </div>
         </div>
